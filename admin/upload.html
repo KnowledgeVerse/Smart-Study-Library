@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Upload Book</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body{background:#f7f9fc;display:flex;justify-content:center;align-items:center;height:100vh;}
+    form{background:#fff;padding:2rem 3rem;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.08);width:100%;max-width:420px;}
+    h2{margin-bottom:1.2rem;text-align:center;}
+    label{display:block;margin-top:1rem;font-weight:600;}
+    input,select{width:100%;padding:.6rem;margin-top:.3rem;border:1px solid #ccc;border-radius:6px;}
+    button{margin-top:1.5rem;width:100%;padding:.7rem;background:#2b73ff;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer;}
+    button:hover{opacity:.95;}
+  </style>
+</head>
+<body>
+  <form id="uploadForm">
+    <h2>Upload New Book</h2>
+    <label>Book Title</label>
+    <input type="text" id="name" required>
+
+    <label>Class</label>
+    <select id="class" required>
+      <option value="preschool">Pre-School</option>
+      <option value="1">Class 1</option><option value="2">Class 2</option><option value="3">Class 3</option>
+      <option value="4">Class 4</option><option value="5">Class 5</option><option value="6">Class 6</option>
+      <option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option>
+      <option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option>
+    </select>
+
+    <label>Subject</label>
+    <input type="text" id="subject" placeholder="e.g. Maths" required>
+
+    <label>Board</label>
+    <select id="board" required>
+      <option>NCERT</option><option>CBSE</option><option>ICSE</option>
+      <option>UP</option><option>Bihar</option><option>WB</option>
+    </select>
+
+    <label>Category</label>
+    <select id="category" required>
+      <option>NCERT</option><option>StateBoard</option><option>Comics</option><option>Preschool</option>
+    </select>
+
+    <label>Cover Image</label>
+    <input type="file" id="cover" accept="image/*" required>
+
+    <label>PDF Book</label>
+    <input type="file" id="pdf" accept="application/pdf" required>
+
+    <button type="submit">Upload & Save</button>
+  </form>
+  <script src="upload.js"></script>
+</body>
+</html>
