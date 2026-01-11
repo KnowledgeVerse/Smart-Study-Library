@@ -3,8 +3,12 @@ const boardSelect   = document.getElementById('boardSelect');
 const classSelector = document.getElementById('classSelector');
 const subjectFilter = document.getElementById('subjectFilter');
 const bookGrid      = document.getElementById('bookGrid');
-const toggleSidebar = document.getElementById('toggleSidebar'); // Side-bar toggle button
+const toggleSidebar = document.getElementById('toggleSidebar');
 const sidebar       = document.getElementById('sidebar');
+const searchIconBtn = document.getElementById('searchIconBtn');
+const searchBoxContainer = document.getElementById('searchBoxContainer');
+const closeSearch = document.getElementById('closeSearch');
+const bookSearch = document.getElementById('bookSearch');
 
 let selectedClass   = 'preschool';
 let selectedBoard   = 'NCERT';
@@ -27,61 +31,58 @@ const subjectsMap = {
   12:['Maths','English','Physics','Chemistry','Biology','Computer']
 };
 
-/* 1. SIDEBAR TOGGLE LOGIC (HIDE/UNHIDE) */
+/* SCIENTIFIC BACKGROUNDS MAPPING */
+const scientificBackgrounds = {
+  'preschool': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022',
+  '1': 'https://images.unsplash.com/photo-1454165833767-027eeaf196ce?q=80&w=2070',
+  '6': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070',
+  '10': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070',
+  '12': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072',
+  'default': 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2190'
+};
+
+/* SIDEBAR TOGGLE */
 if (toggleSidebar) {
   toggleSidebar.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
-    
-    // आइकॉन को बदलने का लॉजिक (Left to Right arrow)
     const icon = toggleSidebar.querySelector('i');
-    if (sidebar.classList.contains('collapsed')) {
-      icon.className = 'bx bx-chevron-right';
-    } else {
-      icon.className = 'bx bx-chevron-left';
-    }
+    icon.className = sidebar.classList.contains('collapsed') ? 'bx bx-chevron-right' : 'bx bx-chevron-left';
   });
 }
 
-/* 2. INITIAL LOAD */
+/* INITIAL LOAD */
 window.addEventListener('DOMContentLoaded', () => {
   buildSubjectFilter();
   loadBooks();
 });
 
-/* 3. CLASS SELECTION */
+/* CLASS SELECTION */
 classSelector.addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return;
-  
   selectedClass = e.target.dataset.class;
-  
-  // Active class button update
   document.querySelectorAll('.class-selector button').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
-  
-  selectedSubject = 'all'; // Reset subject when class changes
+  selectedSubject = 'all';
   buildSubjectFilter();
   loadBooks();
 });
 
-/* 4. BOARD SELECTION */
+/* BOARD SELECTION */
 boardSelect.addEventListener('change', e => {
   selectedBoard = e.target.value;
   loadBooks();
 });
 
-/* 5. SUBJECT FILTER */
+/* SUBJECT FILTER */
 subjectFilter.addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return;
-  
   selectedSubject = e.target.dataset.sub;
-  
   document.querySelectorAll('.subject-filter button').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
-  
   loadBooks();
 });
 
-/* 6. BUILD SUBJECT BUTTONS */
+/* BUILD SUBJECT BUTTONS */
 function buildSubjectFilter() {
   subjectFilter.innerHTML = '<button data-sub="all" class="active">All</button>';
   const subjects = subjectsMap[selectedClass] || [];
@@ -93,99 +94,34 @@ function buildSubjectFilter() {
   });
 }
 
-/* 7. LOAD & RENDER BOOKS */
-async function loadBooks() {
+/* CHECK PDF EXISTS */
+async function checkPdfExists(pdfPath) {
   try {
-    const res = await fetch('data/books.json');
-    const data = await res.json();
-    
-    let list = data.books.filter(b => {
-      return b.class === selectedClass &&
-             b.board === selectedBoard &&
-             (selectedSubject === 'all' || b.subject === selectedSubject);
-    });
-    
-    renderBooks(list);
+    const response = await fetch(pdfPath, { method: 'HEAD' });
+    return response.ok;
   } catch (error) {
-    console.error("Error loading books:", error);
-    bookGrid.innerHTML = '<p>Error loading data. Please check data/books.json</p>';
+    return false;
   }
 }
 
-function renderBooks(list) {
-  bookGrid.innerHTML = '';
-  
-  if (list.length === 0) {
-    bookGrid.innerHTML = '<p class="no-data">No books found for this selection.</p>';
-    return;
-  }
-
-  list.forEach(b => {
-    const card = document.createElement('div');
-    card.className = 'book-card';
-    
-    // कवर्स के लिए लॉजिक: अगर इमेज नहीं है तो कलरफुल ग्रेडिएंट बॉक्स दिखाएं
-    const coverHtml = (b.cover && b.cover !== "" && b.cover !== "none") 
-      ? `<img src="${b.cover}" alt="${b.name}">`
-      : `<div class="book-cover-placeholder">
-           <div class="class-label">Class ${b.class}</div>
-           <div class="subject-label">${b.subject}</div>
-           <div class="book-title-small">${b.name}</div>
-         </div>`;
-
-    card.innerHTML = `
-      ${coverHtml}
-      <div class="info">
-        <h4>${b.name}</h4>
-        <div class="meta">${b.subject} • ${b.board}</div>
-        <div class="actions">
-          <button class="download" onclick="downloadBook('${b.pdf}')">Download</button>
-          <button class="read" onclick="readBook('${b.pdf}')">Read Online</button>
-        </div>
-      </div>
-    `;
-    bookGrid.appendChild(card);
-  });
-}
-
-/* 8. ACTIONS */
-function downloadBook(url) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = url.split('/').pop();
-  a.click();
-}
-
-function readBook(url) {
-  window.open(url, '_blank');
-}
-
-/* SCIENTIFIC BACKGROUNDS MAPPING */
-const scientificBackgrounds = {
-  'preschool': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022', // Playful
-  '1': 'https://images.unsplash.com/photo-1454165833767-027eeaf196ce?q=80&w=2070',
-  '6': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070', // Biology/Microscope
-  '10': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070', // Physics/Atom
-  '12': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072', // Space/Quantum
-  'default': 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2190'
-};
-
+/* UPDATE BACKGROUND */
 function updateBackground(cls) {
   const bgUrl = scientificBackgrounds[cls] || scientificBackgrounds['default'];
   document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${bgUrl}')`;
 }
 
-/* Update Render Function */
-function renderBooks(list) {
+/* RENDER BOOKS */
+async function renderBooks(list) {
   bookGrid.innerHTML = '';
-  updateBackground(selectedClass); // Background update on change
+  updateBackground(selectedClass);
 
-  list.forEach(b => {
+  for (const b of list) {
+    const pdfExists = await checkPdfExists(b.pdf);
     const card = document.createElement('div');
     card.className = 'book-card';
     
     const coverHtml = (b.cover && b.cover !== "" && b.cover !== "none") 
-      ? `<img src="${b.cover}" alt="${b.name}">`
+      ? `<img src="${b.cover}" alt="${b.name}" onerror="this.src='https://via.placeholder.com/220x280/cccccc/000?text=No+Cover'">`
       : `<div class="book-cover-placeholder">
            <div class="placeholder-board">${b.board}</div>
            <div class="placeholder-class">CLASS ${b.class}</div>
@@ -199,83 +135,114 @@ function renderBooks(list) {
         <h4>${b.name}</h4>
         <div class="meta">${b.subject} • ${b.board}</div>
         <div class="actions">
-          <button class="download" onclick="downloadBook('${b.pdf}')">Download</button>
-          <button class="read" onclick="readBook('${b.pdf}')">Read</button>
+          <button class="download" onclick="downloadBook('${b.pdf}')" ${!pdfExists ? 'disabled style="opacity:0.5;"' : ''}>
+            ${pdfExists ? 'Download' : 'Not Available'}
+          </button>
+          <button class="read" onclick="readBook('${b.pdf}')" ${!pdfExists ? 'disabled style="opacity:0.5;"' : ''}>
+            ${pdfExists ? 'Read' : 'Not Available'}
+          </button>
         </div>
       </div>
     `;
     bookGrid.appendChild(card);
-  });
+  }
 }
 
-const searchIconBtn = document.getElementById('searchIconBtn');
-const searchBoxContainer = document.getElementById('searchBoxContainer');
-const closeSearch = document.getElementById('closeSearch');
-const bookSearch = document.getElementById('bookSearch');
+/* LOAD BOOKS - SINGLE FUNCTION */
+async function loadBooks() {
+  try {
+    const res = await fetch('data/books.json');
+    if (!res.ok) throw new Error("JSON file not found");
+    
+    const data = await res.json();
+    const localData = JSON.parse(localStorage.getItem('myCustomBooks')) || [];
+    const allBooks = [...data.books, ...localData];
 
-// Typing Effect Content
+    const searchTerm = bookSearch.value.toLowerCase();
+
+    let list = allBooks.filter(b => {
+      const isAllMode = (selectedClass === 'all');
+      const matchesClass = isAllMode || b.class === selectedClass;
+      const matchesBoard = isAllMode || b.board === selectedBoard;
+      const matchesSubject = (selectedSubject === 'all' || b.subject === selectedSubject);
+      const matchesSearch = b.name.toLowerCase().includes(searchTerm);
+
+      return matchesClass && matchesBoard && matchesSubject && matchesSearch;
+    });
+    
+    renderBooks(list);
+  } catch (error) {
+    console.error("❌ Error loading books:", error);
+    bookGrid.innerHTML = '<p style="color:red;">Error loading books: ' + error.message + '</p>';
+  }
+}
+
+/* BOOK ACTIONS */
+function downloadBook(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = url.split('/').pop();
+  a.click();
+}
+
+function readBook(pdfPath) {
+  window.open(pdfPath, '_blank');
+}
+
+/* SEARCH FUNCTIONALITY */
 const searchPrompts = ["Maths Grade 10...", "Physics NCERT...", "Science Spark...", "English Reader..."];
 let promptIndex = 0;
 let charIndex = 0;
 let typingInterval;
 
 function typePlaceholder() {
-    const currentPrompt = searchPrompts[promptIndex];
-    if (charIndex < currentPrompt.length) {
-        bookSearch.placeholder += currentPrompt.charAt(charIndex);
-        charIndex++;
-        typingInterval = setTimeout(typePlaceholder, 100);
-    } else {
-        setTimeout(erasePlaceholder, 2000);
-    }
+  const currentPrompt = searchPrompts[promptIndex];
+  if (charIndex < currentPrompt.length) {
+    bookSearch.placeholder += currentPrompt.charAt(charIndex);
+    charIndex++;
+    typingInterval = setTimeout(typePlaceholder, 100);
+  } else {
+    setTimeout(() => {
+      charIndex = currentPrompt.length;
+      erasePlaceholder();
+    }, 2000);
+  }
 }
 
 function erasePlaceholder() {
-    if (charIndex > 0) {
-        bookSearch.placeholder = bookSearch.placeholder.slice(0, -1);
-        charIndex--;
-        typingInterval = setTimeout(erasePlaceholder, 50);
-    } else {
-        promptIndex = (promptIndex + 1) % searchPrompts.length;
-        typePlaceholder();
-    }
-}
-
-// Open Search & Start Typing
-searchIconBtn.addEventListener('click', () => {
-    searchBoxContainer.classList.add('active');
-    bookSearch.focus();
-    bookSearch.placeholder = "";
-    charIndex = 0;
-    clearTimeout(typingInterval);
+  if (charIndex > 0) {
+    bookSearch.placeholder = bookSearch.placeholder.slice(0, -1);
+    charIndex--;
+    typingInterval = setTimeout(erasePlaceholder, 50);
+  } else {
+    promptIndex = (promptIndex + 1) % searchPrompts.length;
     typePlaceholder();
-});
-
-// Close Search
-closeSearch.addEventListener('click', () => {
-    searchBoxContainer.classList.remove('active');
-    clearTimeout(typingInterval);
-    bookSearch.value = '';
-    loadBooks(); 
-});
-
-// All Books Search Logic
-async function loadBooks() {
-    const res = await fetch('data/books.json');
-    const data = await res.json();
-    const searchTerm = bookSearch.value.toLowerCase();
-
-    let list = data.books.filter(b => {
-        // Agar 'all' mode hai toh board aur class check nahi hogi
-        const isAllMode = (selectedClass === 'all');
-        const matchesClass = isAllMode || b.class === selectedClass;
-        const matchesBoard = isAllMode || b.board === selectedBoard;
-        const matchesSubject = (selectedSubject === 'all' || b.subject === selectedSubject);
-        const matchesSearch = b.name.toLowerCase().includes(searchTerm);
-
-        return matchesClass && matchesBoard && matchesSubject && matchesSearch;
-    });
-    renderBooks(list);
+  }
 }
+
+/* SEARCH EVENTS */
+searchIconBtn.addEventListener('click', () => {
+  searchBoxContainer.classList.add('active');
+  bookSearch.focus();
+  bookSearch.placeholder = "";
+  charIndex = 0;
+  clearTimeout(typingInterval);
+  typePlaceholder();
+});
+
+closeSearch.addEventListener('click', () => {
+  searchBoxContainer.classList.remove('active');
+  clearTimeout(typingInterval);
+  bookSearch.value = '';
+  loadBooks();
+});
 
 bookSearch.addEventListener('input', loadBooks);
+
+/* ADD NEW BOOK */
+function addNewBook(newBook) {
+  let localBooks = JSON.parse(localStorage.getItem('myCustomBooks')) || [];
+  localBooks.push(newBook);
+  localStorage.setItem('myCustomBooks', JSON.stringify(localBooks));
+  loadBooks();
+}
