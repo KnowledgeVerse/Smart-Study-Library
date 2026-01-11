@@ -287,6 +287,17 @@ body {
   .header-actions { order: 2; margin: 0; }
 }
 
+@media (max-width: 600px) {
+  .sidebar-logo-img {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  
+  .sidebar-logo-text {
+    font-size: 1.2rem;
+  }
+}
+
 /* --- SUBJECT FILTER (SAME AS CLASS BUT GREEN GLOW) --- */
 .subject-filter {
   display: flex;
@@ -459,4 +470,31 @@ body {
 .gradient-text:hover {
   filter: drop-shadow(0 0 12px rgba(0, 255, 204, 0.6));
   transition: 0.3s ease;
+}
+
+/* --- MOBILE LOGO FIX --- */
+@media (max-width: 600px) {
+  /* Top Bar Logo ka size mobile ke liye */
+  .top-bar-logo {
+    height: 35px !important; /* Mobile par chota size */
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* Website name (Smart Study) ka size bhi thoda chota karein */
+  .gradient-text {
+    font-size: 1.4rem !important;
+    letter-spacing: 0px;
+  }
+
+  /* Logo aur Text ke beech ka gap kam karein */
+  .header-brand {
+    gap: 8px !important;
+    /* Agar logo center mein nahi aa raha toh ise check karein */
+    position: relative;
+    left: 0;
+    transform: none;
+    justify-content: center;
+    width: 100%;
+  }
 }
