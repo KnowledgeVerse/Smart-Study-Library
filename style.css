@@ -1,186 +1,462 @@
-:root{
-  --primary:#2b73ff;
-  --sidebar:#ffffff;
-  --bg:#f5f7fb;
-  --text:#222;
-  --radius:12px;
-  --transition:.3s ease;
+:root {
+  --primary: #1e62d0;
+  --secondary: #009b9d;
+  --bg: #f0f2f5;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 12px;
+  --transition: 0.3s ease;
 }
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:"Segoe UI",sans-serif;
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  font-family: 'Segoe UI', sans-serif; 
 }
-body{
-  display:flex;
-  min-height:100vh;
-  background:var(--bg);
-  color:var(--text);
+
+body { 
+  display: flex; 
+  min-height: 100vh;
+  background: var(--bg); 
+  color: var(--text); 
+  overflow-x: hidden; 
 }
-/* SIDEBAR */
-.sidebar{
-  width:250px;
-  background:var(--sidebar);
-  box-shadow:2px 0 8px rgba(0,0,0,.05);
-  display:flex;
-  flex-direction:column;
-  position:sticky;
-  top:0;
-  height:100vh;
-  padding:1rem;
+
+/* --- SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background: var(--white);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 1.5rem 1rem;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+  transition: width var(--transition);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
 }
-.sidebar .logo{
-  display:flex;
-  align-items:center;
-  gap:.75rem;
-  margin-bottom:2rem;
+
+/* Side-bar Collapse Logic */
+.sidebar.collapsed { width: 80px; }
+.sidebar.collapsed .sidebar-logo-text, 
+.sidebar.collapsed span { 
+  display: none; 
 }
-.sidebar .logo img{
-  width:42px;
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  overflow: hidden;
 }
-.sidebar nav a{
-  display:flex;
-  align-items:center;
-  gap:.75rem;
-  padding:.85rem 1rem;
-  margin-bottom:.5rem;
-  border-radius:var(--radius);
-  text-decoration:none;
-  color:var(--text);
-  transition:background var(--transition);
+
+.sidebar-logo-img { width: 40px; min-width: 40px; }
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  text-decoration: none;
+  color: var(--text);
+  border-radius: var(--radius);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  transition: var(--transition);
 }
-.sidebar nav a:hover,
-.sidebar nav a.active{
-  background:var(--primary);
-  color:#fff;
+
+.sidebar nav a.active, 
+.sidebar nav a:hover {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #fff;
 }
-/* MAIN */
-.main{
-  flex:1;
-  padding:2rem;
+
+/* --- MAIN & FIXED GLASS TOP BAR --- */
+.main { 
+  flex: 1; 
+  min-width: 0; 
+  position: relative; 
 }
-.top-bar{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:1.5rem;
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  /* Glassmorphism Effect */
+  background: rgba(255, 255, 255, 0.75); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  height: 70px;
+  display: flex;
+  align-items: center;
 }
-#boardSelect{
-  padding:.5rem 1rem;
-  border-radius:var(--radius);
-  border:1px solid #ccc;
+
+.top-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
 }
-/* CLASS SELECTOR */
-.class-selector{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.75rem;
-  margin-bottom:2rem;
+
+/* Center Logo and Name */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
-.class-selector button{
-  padding:.6rem 1.2rem;
-  border:2px solid var(--primary);
-  background:#fff;
-  color:var(--primary);
-  border-radius:var(--radius);
-  cursor:pointer;
-  transition:var(--transition);
+
+.top-bar-logo { height: 45px; width: auto; }
+
+.gradient-text {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #1e62d0, #009b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: -1px;
 }
-.class-selector button.active,
-.class-selector button:hover{
-  background:var(--primary);
-  color:#fff;
+
+/* Right side actions */
+.header-actions {
+  margin-left: auto;
 }
-/* SUBJECT FILTER */
-.subject-filter{
-  display:flex;
-  gap:.75rem;
-  margin-bottom:2rem;
-  flex-wrap:wrap;
+
+#boardSelect {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
 }
-.subject-filter button{
-  padding:.5rem 1rem;
-  border:1px solid #ccc;
-  background:#fff;
-  border-radius:var(--radius);
-  cursor:pointer;
+
+.scroll-content { padding: 2rem; }
+
+/* --- CLASS SELECTOR (GLOWING TABS) --- */
+.class-selector { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px; 
+  margin-bottom: 25px; 
 }
-.subject-filter button.active{
-  background:var(--primary);
-  color:#fff;
-  border-color:var(--primary);
+
+/* --- CLASS SELECTOR (UPDATED AS PER IMAGE) --- */
+.class-selector button {
+  padding: 8px 20px;
+  border: 1.5px solid var(--primary); /* Blue outline */
+  background: #fff;
+  color: var(--primary);
+  border-radius: 14px; /* Zyada rounded corners */
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none; /* Shadow hata di image ke hisab se */
+  transition: all 0.3s ease;
 }
-/* BOOK GRID */
-.book-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:1.5rem;
+
+.class-selector button.active {
+  background: var(--primary); /* Solid blue on active */
+  color: #fff;
+  transform: none; /* Image mein transform nahi hai */
+  /* Glowing effect */
+  box-shadow: 0 8px 15px rgba(30, 98, 208, 0.4); 
 }
-.book-card{
-  background:#fff;
-  border-radius:var(--radius);
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
+
+.class-selector button:hover {
+  background: rgba(30, 98, 208, 0.05); /* Light blue tint on hover */
 }
-.book-card img{
-  width:100%;
-  height:280px;
-  object-fit:cover;
-  background:#eef;
+
+
+/* --- DYNAMIC BOOK COVERS (NO IMAGE) --- */
+.book-cover-placeholder {
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(135deg, #1e62d0, #009b9d);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
 }
-.book-card .info{
-  padding:1rem;
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+
+.cls-tag { 
+  background: rgba(255,255,255,0.2); 
+  padding: 5px 15px; 
+  border-radius: 20px; 
+  font-size: 0.85rem; 
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
 }
-.book-card h4{
-  margin-bottom:.5rem;
-  font-size:1.05rem;
+
+.sub-tag { 
+  font-size: 1.8rem; 
+  font-weight: bold; 
+  text-transform: uppercase;
+  line-height: 1.1;
 }
-.book-card .meta{
-  font-size:.8rem;
-  color:#666;
-  margin-bottom:.75rem;
+
+.book-title-small {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 10px;
 }
-.book-card .actions{
-  display:flex;
-  gap:.5rem;
+
+/* --- BOOK CARD --- */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
 }
-.book-card button{
-  flex:1;
-  padding:.5rem;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
+
+.book-card {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
-.book-card .download{
-  background:var(--primary);
-  color:#fff;
+
+.book-card:hover { transform: translateY(-8px); }
+
+.book-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
 }
-.book-card .read{
-  background:#fff;
-  border:1px solid var(--primary);
-  color:var(--primary);
+
+.book-card .info { padding: 1.2rem; flex: 1; }
+.book-card h4 { font-size: 1.1rem; margin-bottom: 5px; }
+.book-card .meta { font-size: 0.85rem; color: #666; margin-bottom: 15px; }
+
+.book-card .actions { display: flex; gap: 8px; }
+.book-card button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
 }
-/* RESPONSIVE */
-@media(max-width:900px){
-  .sidebar{
-    width:200px;
+
+.book-card .download { background: var(--primary); color: #fff; }
+.book-card .read { background: #fff; border: 1px solid var(--primary); color: var(--primary); }
+
+/* --- RESPONSIVE FIXES --- */
+@media (max-width: 900px) {
+  .header-brand { 
+    position: relative; 
+    left: 0; 
+    transform: none; 
+  }
+  .top-bar-container { 
+    justify-content: space-between; 
+  }
+  .gradient-text { font-size: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  body { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 10px;
+  }
+  .top-bar { height: auto; padding: 15px; }
+  .top-bar-container { flex-direction: column; gap: 10px; }
+  .header-brand { order: 1; }
+  .header-actions { order: 2; margin: 0; }
+}
+
+/* --- SUBJECT FILTER (SAME AS CLASS BUT GREEN GLOW) --- */
+.subject-filter {
+  display: flex;
+  gap: .75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.subject-filter button {
+  padding: .6rem 1.2rem; /* Class buttons jaisa same padding */
+  border: 2px solid #28a745; /* Green outline */
+  background: #fff;
+  color: #28a745; /* Green text */
+  border-radius: var(--radius); /* Same radius */
+  cursor: pointer;
+  font-family: "Segoe UI", sans-serif; /* Same font */
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.subject-filter button.active {
+  background: #28a745; /* Solid Green when active */
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4); /* Green Glowing effect */
+  border-color: #28a745;
+}
+
+.subject-filter button:hover:not(.active) {
+  background: rgba(40, 167, 69, 0.05); /* Light green tint on hover */
+  border-color: #218838;
+  color: #218838;
+}
+
+/* SEARCH BAR STYLE */
+.search-container {
+    position: relative;
+    margin-right: auto; /* Isse search bar left mein rahega aur select right mein */
+    width: 300px;
+}
+.search-container i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+#bookSearch {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+    border-radius: var(--radius);
+    border: 1px solid #ddd;
+    outline: none;
+    transition: 0.3s;
+}
+#bookSearch:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(30, 98, 208, 0.2);
+}
+
+/* Responsiveness for Search */
+@media(max-width: 600px) {
+    .top-bar { flex-direction: column; gap: 10px; }
+    .search-container { width: 100%; }
+}
+
+/* --- SEARCH LENS & BOX --- */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-btn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon-btn:hover {
+  text-shadow: 0 0 10px var(--primary); /* Glowing lens effect */
+  transform: scale(1.1);
+}
+
+.search-box-container {
+  position: absolute;
+  left: 40px; /* Lens ke thoda aage khulega */
+  display: none; 
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  padding: 5px 15px;
+  box-shadow: 0 0 15px rgba(43, 115, 255, 0.3); /* Blue glow */
+  width: 250px;
+  animation: slideIn 0.4s ease forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.search-box-container.active {
+  display: flex;
+}
+
+#bookSearch {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+#closeSearch {
+  cursor: pointer;
+  color: #ff4d4d;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+/* --- SMART STUDY TEXT-ONLY GLOW EFFECT --- */
+.gradient-text {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  display: inline-block;
+  
+  /* Base Gradient (Blue to Green) */
+  background: linear-gradient(
+    90deg, 
+    #1e62d0, 
+    #009b9d, 
+    #00ffcc, 
+    #1e62d0
+  );
+  background-size: 300% auto;
+  
+  /* Isse effect sirf text ke andar dikhega */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Text Glow Shadow (Sirf aksharon ke peeche) */
+  filter: drop-shadow(0 0 8px rgba(0, 255, 204, 0.3));
+  
+  /* Left to Right Animation */
+  animation: neonTextFlow 4s linear infinite;
+}
+
+/* Text ke andar light move hone ki animation */
+@keyframes neonTextFlow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 300% center;
   }
 }
-@media(max-width:700px){
-  body{flex-direction:column;}
-  .sidebar{
-    width:100%;
-    height:auto;
-    position:relative;
-  }
-  .main{
-    padding:1rem;
-  }
+
+/* Hover karne par glow thoda badh jayega */
+.gradient-text:hover {
+  filter: drop-shadow(0 0 12px rgba(0, 255, 204, 0.6));
+  transition: 0.3s ease;
 }
